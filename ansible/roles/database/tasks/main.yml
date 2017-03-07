@@ -1,0 +1,80 @@
+
+- name: print ansible_connection
+  debug:
+    msg: "{{ansible_connection}} {{ansible_lsb.id}}: {{ansible_lsb.release}} {{ ansible_lsb.codename }}"
+
+- name: install ca-certif and wget
+  apt:
+    name: '{{item}}'
+    update_cache: yes
+  with_items:
+    - wget
+    - ca-certificates
+  become: yes
+
+- name: pgdg source list
+  template:
+    src: pgdg.list
+    dest: /etc/apt/sources.list.d/pgdg.list
+    owner: root
+    group: root
+    # mode: 0755
+  become: yes
+
+- name: download postgres apt key
+  shell:
+    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+  become: yes
+
+- name: install all postgresql
+  apt:
+    name: '{{ item }}'
+    update_cache: yes
+  with_items:
+    - postgresql-9.5
+    - postgresql-contrib-9.5
+    # - postgis
+    - postgresql-9.5-postgis-2.2
+    - postgresql-plpython-9.5
+    - postgresql-9.5-pgrouting
+    - python-psycopg2
+    - osm2pgsql
+  become: yes
+
+- name: ensure PostgreSQL is started
+  systemd:
+    name: postgresql@9.5-main
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  become: true
+
+- name: add postgresql '{{ tempus_username }}' user
+  postgresql_user:
+    name: '{{ tempus_username }}'
+    password: '{{ tempus_password }}'
+    port: '{{pg_port}}'
+    role_attr_flags: SUPERUSER
+  become: yes
+  become_user: postgres
+
+- name: add postgresql '{{ tempus_database }}' database
+  postgresql_db:
+    name: '{{ tempus_database }}'
+    owner: '{{ tempus_username }}'
+    port: '{{pg_port}}'
+  become: yes
+  become_user: postgres
+
+- postgresql_ext:
+    name: '{{ item }}'
+    db: '{{ tempus_database }}'
+    port: '{{pg_port}}'
+  with_items:
+    - hstore
+    - postgis
+    - pgrouting
+    - plpgsql
+    - plpythonu
+  become: yes
+  become_user: postgres

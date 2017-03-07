@@ -1,0 +1,47 @@
+
+- name: ensure tempus deps are installed
+  apt:
+    name: '{{ item }}'
+    update_cache: yes
+  with_items:
+    - postgresql-server-dev-9.5
+    - libgeos-dev
+    - g++
+    - libboost-all-dev
+    - libshp-dev
+    - libxml2-dev
+    - cmake
+    - libfcgi-dev
+    - libtool
+    - libproj-dev
+    - libgdal-dev
+    - pyqt4-dev-tools
+    - libprotobuf-dev
+    - protobuf-compiler
+    - libosmpbf-dev
+    - python-setuptools
+  become: yes
+
+- name: cloning tempus with git
+  git:
+    repo: https://github.com/Ifsttar/Tempus
+    dest: /home/{{tempus_username}}/{{tempus_source_dir}}
+    version: v2.2.0
+  become_user: '{{tempus_username}}'
+  become: yes
+
+- name: copy build script shell
+  copy:
+    src: tempus-build.sh
+    dest: /home/{{tempus_username}}/{{tempus_source_dir}}/tempus-build.sh
+    mode: 0755
+  become_user: '{{tempus_username}}'
+  become: yes
+
+- name: compile tempus with cmake
+  shell:
+    bash tempus-build.sh >> tempus-build.log
+  args:
+    chdir: /home/{{tempus_username}}/{{tempus_source_dir}}
+    creates: /usr/local/bin/osm2tempus
+  become: yes

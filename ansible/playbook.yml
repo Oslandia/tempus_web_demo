@@ -1,0 +1,13 @@
+---
+- hosts: tempus
+  # become_user: ubuntu
+  # become: yes
+  vars_files:
+    - vars/dev.yml
+    # - vars/prod.yml
+
+  roles:
+    - admin
+    - database
+    - osm
+    - tempus

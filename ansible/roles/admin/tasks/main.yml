@@ -1,0 +1,5 @@
+- user:
+    name: '{{tempus_username}}'
+    comment: "tempus user creation"
+    shell: /bin/bash
+  become: yes

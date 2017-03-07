@@ -1,0 +1,17 @@
+hostname: '{{ inventory_hostname }}'
+
+tempus_username: 'tempus'
+tempus_password: 'tempus'
+tempus_database: 'demo_tempus'
+pg_port: 5432
+
+geofabrik_url: 'http://download.geofabrik.de/europe/france'
+osm_region_file: 'rhone-alpes-latest.osm.pbf'
+osm_dist_filename: 'osm-for-tempus.osm.pbf'
+osm_bounded_box_filename: 'lyon.osm.pbf'
+osm_left: 4.72
+osm_bottom: 45.65
+osm_right: 5.00
+osm_top: 45.87
+
+tempus_source_dir: 'tempus_source'

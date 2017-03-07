@@ -1,0 +1,25 @@
+
+- name: install OSM tools
+  apt:
+    name: '{{ item }}'
+    update_cache: yes
+  with_items:
+    - osmosis
+  become: yes
+
+
+- name: download OSM data for '{{tempus_username}}'
+  get_url:
+    url: '{{geofabrik_url}}/{{osm_region_file}}'
+    dest: '/home/{{tempus_username}}/{{osm_dist_filename}}'
+  become_user: '{{tempus_username}}'
+  become: yes
+
+
+- name: extract a bouding box
+  shell:
+    osmosis --read-pbf /home/{{tempus_username}}/{{osm_dist_filename}} --bounding-box  left={{osm_left}}  bottom={{osm_bottom}} right={{osm_right}} top={{osm_top}} --write-pbf file=/home/{{tempus_username}}/{{osm_bounded_box_filename}}
+  args:
+    creates: '/home/{{tempus_username}}/{{osm_bounded_box_filename}}'
+  become_user: '{{tempus_username}}'
+  become: yes
