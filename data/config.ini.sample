@@ -1,0 +1,5 @@
+dbname=demo_tempus
+dbuser=tempus
+schema=grandlyon_import
+pgport=5432
+srid=4326
