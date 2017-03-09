@@ -24,7 +24,7 @@
 
 - name: cloning tempus with git
   git:
-    repo: https://github.com/Ifsttar/Tempus
+    repo: https://gitlab.com/oslandia/tempus_core
     dest: /home/{{tempus_username}}/{{tempus_source_dir}}
     version: v2.2.0
   become_user: '{{tempus_username}}'
